@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tallwaves — Holding</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --navy:   #0a0f1e;
+      --accent: #c8a96e;
+      --text:   #e8e4dc;
+      --muted:  rgba(232,228,220,0.45);
+      --border: rgba(200,169,110,0.2);
+      --white:  #f5f2ec;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--navy);
+      color: var(--text);
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      overflow-x: hidden;
+    }
+
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.03; pointer-events: none; z-index: 999;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 28px 56px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem; font-weight: 300;
+      letter-spacing: 0.35em; text-transform: uppercase;
+      color: var(--white); text-decoration: none;
+      opacity: 0; animation: fadeIn 1s ease 0.2s forwards;
+    }
+
+    .nav-right {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem; letter-spacing: 0.18em;
+      color: rgba(245,242,236,0.5); text-transform: uppercase;
+      opacity: 0; animation: fadeIn 1s ease 0.4s forwards;
+    }
+
+    /* ─── HERO ─── */
+    .hero {
+      position: relative; width: 100%; height: 100vh; min-height: 640px;
+      display: flex; align-items: flex-end; overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute; inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=1800&q=85&auto=format&fit=crop');
+      background-size: cover; background-position: center 40%;
+      transform: scale(1.04);
+      animation: slowZoom 18s ease-out forwards;
+    }
+
+    .hero-overlay {
+      position: absolute; inset: 0;
+      background:
+        linear-gradient(to top,  rgba(10,15,30,0.97) 0%, rgba(10,15,30,0.55) 45%, rgba(10,15,30,0.2) 100%),
+        linear-gradient(to right, rgba(10,15,30,0.5) 0%, transparent 60%);
+    }
+
+    .hero-line {
+      position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(to right, var(--accent), transparent 70%);
+      opacity: 0.6;
+    }
+
+    .hero-content {
+      position: relative; z-index: 2;
+      width: 100%; max-width: 1100px;
+      margin: 0 auto; padding: 0 56px 80px;
+    }
+
+    .hero-eyebrow {
+      font-family: 'DM Mono', monospace; font-size: 0.6rem;
+      letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent);
+      margin-bottom: 24px;
+      opacity: 0; animation: fadeUp 0.9s ease 0.65s forwards;
+    }
+
+    .hero-title {
+      font-size: clamp(3.8rem, 9vw, 8rem);
+      font-weight: 300; line-height: 1.0; letter-spacing: -0.015em;
+      color: var(--white); margin-bottom: 10px;
+      opacity: 0; animation: fadeUp 0.9s ease 0.85s forwards;
+    }
+    .hero-title em { font-style: italic; color: var(--accent); }
+
+    .hero-sub {
+      font-size: clamp(1.2rem, 2.5vw, 1.9rem);
+      font-weight: 300; font-style: italic;
+      color: rgba(232,228,220,0.55); margin-bottom: 48px;
+      opacity: 0; animation: fadeUp 0.9s ease 1s forwards;
+    }
+
+    .hero-divider {
+      width: 48px; height: 1px; background: var(--accent); margin-bottom: 32px;
+      opacity: 0; animation: fadeUp 0.9s ease 1.1s forwards;
+    }
+
+    .hero-desc {
+      max-width: 480px; font-size: 1.15rem; font-weight: 300;
+      line-height: 1.85; color: rgba(232,228,220,0.65);
+      opacity: 0; animation: fadeUp 0.9s ease 1.25s forwards;
+    }
+
+    .scroll-hint {
+      position: absolute; bottom: 40px; right: 56px; z-index: 2;
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
+      opacity: 0; transition: opacity 0.4s ease;
+      animation: fadeIn 1s ease 2s forwards;
+    }
+    .scroll-hint span {
+      font-family: 'DM Mono', monospace; font-size: 0.55rem;
+      letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted);
+      writing-mode: vertical-rl;
+    }
+    .scroll-hint-line {
+      width: 1px; height: 48px;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+      animation: scrollPulse 2s ease-in-out 2.5s infinite;
+    }
+
+    /* ─── STATS ─── */
+    .stats { border-top: 1px solid var(--border); padding: 88px 0; }
+
+    .wrapper { max-width: 1100px; margin: 0 auto; padding: 0 56px; }
+
+    .stats-grid { display: grid; grid-template-columns: repeat(3,1fr); }
+
+    .stat-item {
+      padding: 40px 48px 40px 0; border-right: 1px solid var(--border);
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .stat-item:last-child  { border-right: none; padding-right: 0; padding-left: 48px; }
+    .stat-item:nth-child(2){ padding-left: 48px; }
+    .stat-item.visible     { opacity: 1; transform: translateY(0); }
+
+    .stat-number {
+      font-size: 3.2rem; font-weight: 300; color: var(--accent);
+      letter-spacing: -0.02em; line-height: 1; margin-bottom: 14px;
+    }
+    .stat-label {
+      font-family: 'DM Mono', monospace; font-size: 0.58rem;
+      letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted);
+    }
+
+    /* ─── OCEAN STRIP ─── */
+    .ocean-strip { position: relative; width: 100%; height: 340px; overflow: hidden; }
+
+    .ocean-strip-bg {
+      position: absolute; inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=1800&q=80&auto=format&fit=crop');
+      background-size: cover; background-position: center 60%;
+      background-attachment: fixed;
+    }
+
+    .ocean-strip-overlay {
+      position: absolute; inset: 0;
+      background:
+        linear-gradient(to bottom, var(--navy) 0%, transparent 25%, transparent 75%, var(--navy) 100%),
+        rgba(10,15,30,0.35);
+    }
+
+    .ocean-strip-text {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .ocean-quote {
+      font-size: clamp(1.5rem, 3.2vw, 2.6rem);
+      font-weight: 300; font-style: italic; color: var(--white);
+      text-align: center; letter-spacing: 0.02em; line-height: 1.45;
+      max-width: 680px; padding: 0 40px;
+      opacity: 0; transform: translateY(16px);
+      transition: opacity 0.9s ease, transform 0.9s ease;
+    }
+    .ocean-quote.visible { opacity: 1; transform: translateY(0); }
+    .ocean-quote em { color: var(--accent); font-style: normal; }
+
+    /* ─── ABOUT ─── */
+    .about { padding: 100px 0 110px; }
+
+    .section-label {
+      font-family: 'DM Mono', monospace; font-size: 0.58rem;
+      letter-spacing: 0.28em; text-transform: uppercase; color: var(--accent);
+      margin-bottom: 52px;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .section-label::before {
+      content: ''; display: inline-block;
+      width: 32px; height: 1px; background: var(--accent);
+    }
+
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 88px; align-items: start; }
+
+    .about-heading {
+      font-size: clamp(2.2rem, 4vw, 3.4rem); font-weight: 300;
+      line-height: 1.2; color: var(--white); letter-spacing: -0.01em;
+    }
+    .about-heading em { font-style: italic; color: var(--accent); }
+
+    .about-body { font-size: 1.12rem; font-weight: 300; line-height: 1.95; color: rgba(232,228,220,0.62); }
+    .about-body p + p { margin-top: 24px; }
+
+    /* ─── FOOTER ─── */
+    footer { border-top: 1px solid var(--border); padding: 52px 0; }
+
+    .footer-inner { display: flex; justify-content: space-between; align-items: center; }
+
+    .footer-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem; font-weight: 300;
+      letter-spacing: 0.35em; text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .footer-meta {
+      font-family: 'DM Mono', monospace; font-size: 0.58rem;
+      letter-spacing: 0.14em; color: var(--muted);
+      text-align: right; line-height: 1.9;
+    }
+
+    /* ─── KEYFRAMES ─── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(22px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn  { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slowZoom { from { transform: scale(1.04); } to { transform: scale(1.0); } }
+    @keyframes scrollPulse {
+      0%,100% { opacity: 0.4; transform: scaleY(1); }
+      50%      { opacity: 1;   transform: scaleY(1.15); }
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 768px) {
+      nav { padding: 24px; }
+      .wrapper { padding: 0 24px; }
+      .hero-content { padding: 0 24px 64px; }
+      .scroll-hint { display: none; }
+      .about-grid { grid-template-columns: 1fr; gap: 40px; }
+      .stats-grid { grid-template-columns: 1fr; }
+      .stat-item { border-right: none; border-bottom: 1px solid var(--border); padding: 28px 0; }
+      .stat-item:last-child  { border-bottom: none; padding-left: 0; }
+      .stat-item:nth-child(2){ padding-left: 0; }
+      .ocean-strip-bg { background-attachment: scroll; }
+      .footer-inner { flex-direction: column; gap: 28px; }
+      .footer-meta  { text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">Tallwaves</a>
+  <span class="nav-right">Amsterdam · Est. 2015</span>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-line"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">Tallwaves B.V. — Persoonlijke Holding</p>
+    <h1 class="hero-title">Denken in<br /><em>generaties.</em></h1>
+    <p class="hero-sub">Bouwen met visie.</p>
+    <div class="hero-divider"></div>
+    <p class="hero-desc">
+      Tallwaves is een privéhoudstermaatschappij gevestigd in Amsterdam,
+      gericht op het duurzaam opbouwen en beheren van ondernemingen,
+      investeringen en waarde op de lange termijn.
+    </p>
+  </div>
+  <div class="scroll-hint">
+    <span>Scroll</span>
+    <div class="scroll-hint-line"></div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="stats">
+  <div class="wrapper">
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="stat-number">2015</div>
+        <div class="stat-label">Opgericht te Amsterdam</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">3+</div>
+        <div class="stat-label">Actieve ondernemingen</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">∞</div>
+        <div class="stat-label">Lange termijn perspectief</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OCEAN STRIP -->
+<div class="ocean-strip">
+  <div class="ocean-strip-bg"></div>
+  <div class="ocean-strip-overlay"></div>
+  <div class="ocean-strip-text">
+    <p class="ocean-quote">
+      "De oceaan beweegt met geduld —<br />
+      <em>kracht zonder haast.</em>"
+    </p>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section class="about">
+  <div class="wrapper">
+    <div class="section-label">Over Tallwaves</div>
+    <div class="about-grid">
+      <div>
+        <h2 class="about-heading">
+          Kapitaal met<br />
+          <em>karakter</em> en<br />
+          continuïteit.
+        </h2>
+      </div>
+      <div class="about-body">
+        <p>
+          Tallwaves B.V. is de persoonlijke houdstermaatschappij gevestigd aan de
+          Keizersgracht in Amsterdam. Vanuit deze structuur worden deelnemingen
+          beheerd, strategische beslissingen genomen en langetermijnwaarde gecreëerd.
+        </p>
+        <p>
+          De filosofie is eenvoudig: bouwen wat telt, investeren met overtuiging,
+          en kapitaal laten werken op een manier die aansluit bij de waarden van de
+          ondernemer achter de holding.
+        </p>
+        <p>
+          Tallwaves is geen merk dat schreeuwt — het is een fundament dat draagt.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrapper">
+    <div class="footer-inner">
+      <div class="footer-logo">Tallwaves</div>
+      <div class="footer-meta">
+        Tallwaves B.V. · KvK 64463842<br />
+        Keizersgracht 555, Amsterdam<br />
+        tallwaves.com
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        const delay = entry.target.classList.contains('stat-item') ? i * 130 : 0;
+        setTimeout(() => entry.target.classList.add('visible'), delay);
+      }
+    });
+  }, { threshold: 0.2 });
+
+  document.querySelectorAll('.stat-item, .ocean-quote').forEach(el => observer.observe(el));
+
+  const scrollHint = document.querySelector('.scroll-hint');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 80) scrollHint.style.opacity = '0';
+  }, { passive: true });
+</script>
+
+</body>
+</html>
